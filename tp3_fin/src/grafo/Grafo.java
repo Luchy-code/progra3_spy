@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class Grafo {
     private int numVertices;
     private List<Vertice> vertices;
@@ -30,7 +31,7 @@ public class Grafo {
         return vertex;
     }
 
-    public void addEdge(Vertice source, Vertice destination, Integer weight) {
+    public void addEdge(Vertice source, Vertice destination, Double weight) {
         if(weight <= 0){
             throw new IllegalArgumentException("The graph cannot be equal to or less than 0");
         }
@@ -61,9 +62,9 @@ public class Grafo {
         this.vertices = vertices;
     }
 
-    public Vertice getVertex (String nameProvince){
+    public Vertice getVertex (String nombreEpia){
         for (Vertice list : vertices) {
-            if(list.getLabel() == nameProvince){
+            if(list.getLabel() == nombreEpia){
                 return list;
             }
         }
@@ -78,26 +79,6 @@ public class Grafo {
         return numVertices;
     }
 
-    public List<Arista> deleteHeavyEdge(List<Arista> listEdges, int remove) {
-    if (listEdges.isEmpty()) {
-        throw new RuntimeException("The list of edges is empty");
-    }
-
-    if (remove <= 0) {
-        throw new IllegalArgumentException("The number of edges to remove must be greater than zero");
-    }
-
-    // We make sure not to remove any extra elements
-    int numberOfRemovals = Math.min(remove, listEdges.size());
-
-
-    // Here we remove the elements that are at the end AKA the heaviest ones
-    for (int i = 0; i < numberOfRemovals; i++) {
-        listEdges.remove(listEdges.size() - 1);
-    }
-
-    return listEdges;
-}
 
     public List<Arista> getAllEdges() {
         List<Arista> allEdges = new ArrayList<>();
@@ -141,7 +122,7 @@ public class Grafo {
    
 
 
-    //This prints the graph in an orderly manner, only showing the vertices with edges, if one is left alone it is not printed.
+   
     public void print() {
         for (Map.Entry<Vertice, List<Arista>> entry : adjacencyList.entrySet()) {
             if (!entry.getValue().isEmpty()) {

@@ -10,43 +10,46 @@ import grafo.Grafo;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
 public class AGM_Test {
-    private Grafo graph;
+	private Grafo graph;
 
-    @BeforeEach
-    public void setUp() {
-        graph = new Grafo();
+	@BeforeEach
+	public void setUp() {
+	    graph = new Grafo();
+
+	    // Agrega los Vértices
+	    graph.addVertex("A");
+	    graph.addVertex("B");
+	    graph.addVertex("C");
+	    graph.addVertex("D");
+	    graph.addVertex("E");
+
+	    // Agrega las Aristas
+	    graph.addEdge(graph.getVertex("A"), graph.getVertex("B"), 0.1);
+	    graph.addEdge(graph.getVertex("A"), graph.getVertex("C"), 0.3);
+	    graph.addEdge(graph.getVertex("A"), graph.getVertex("D"), 0.4);
+	    graph.addEdge(graph.getVertex("B"), graph.getVertex("D"), 0.2);
+	    graph.addEdge(graph.getVertex("B"), graph.getVertex("E"), 0.5);
+	    graph.addEdge(graph.getVertex("C"), graph.getVertex("D"), 0.6);
+	    graph.addEdge(graph.getVertex("D"), graph.getVertex("E"), 0.7);
+	}
+
+	@Test
+	public void testMinimumSpanningTree() {
+	    MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
+	    List<Arista> mst = mstFinder.minimumSpanningTree(graph);
+
+	    assertNotNull(mst, "El árbol generador mínimo no tiene que ser null");
+	    assertEquals(4, mst.size(), "Tiene que tener al menos 4 aristas");
+
+	    Double totalWeight = mst.stream().mapToDouble(Arista::getPeso).sum();
+
+	    // Usamos un margen de error pequeño para la comparación de números flotantes
+	    assertEquals(1.1, totalWeight, 0.0001, "El peso total debería ser 2.8");
+	}
 
 
-        // Agrega a los Vertices
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("D");
-        graph.addVertex("E");
-
-        // Agrega a los Aristas
-        graph.addEdge(graph.getVertex("A"), graph.getVertex("B"), 1);
-        graph.addEdge(graph.getVertex("A"), graph.getVertex("C"), 3);
-        graph.addEdge(graph.getVertex("A"), graph.getVertex("D"), 4);
-        graph.addEdge(graph.getVertex("B"), graph.getVertex("D"), 2);
-        graph.addEdge(graph.getVertex("B"), graph.getVertex("E"), 5);
-        graph.addEdge(graph.getVertex("C"), graph.getVertex("D"), 6);
-        graph.addEdge(graph.getVertex("D"), graph.getVertex("E"), 7);
-    }
-
-
-    @Test
-    public void testMinimumSpanningTree() {
-        MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
-        List<Arista> mst = mstFinder.minimumSpanningTree(graph);
-
-        assertNotNull(mst, "El arbol generador minimo no tiene que ser null");
-        assertEquals(4, mst.size(), "Tiene que tener al menso 4 Aristas");
-
-        int totalWeight = mst.stream().mapToInt(Arista::getPeso).sum();
-        assertEquals(11, totalWeight, "El peso total tendria que ser 11");
-    }
 
     @Test
     public void testDisconnectedGraph() {
@@ -55,7 +58,7 @@ public class AGM_Test {
         disconnectedGraph.addVertex("B");
         disconnectedGraph.addVertex("C");
 
-        disconnectedGraph.addEdge(disconnectedGraph.getVertex("A"), disconnectedGraph.getVertex("B"), 1);
+        disconnectedGraph.addEdge(disconnectedGraph.getVertex("A"), disconnectedGraph.getVertex("B"), 0.1);
 
         MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
         List<Arista> mst = mstFinder.minimumSpanningTree(disconnectedGraph);

@@ -1,21 +1,15 @@
 package controller;
 
 import javax.swing.*;
-
-import javax.swing.*;
-
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
-
 import algoritmo.MinimumGeneratingTree;
 import coordinates.Coordinates;
 import grafo.Arista;
 import grafo.Grafo;
 import interfaz.Interfaz;
 import interfaz.Interfaz_Principal;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -30,7 +24,7 @@ public class Controller {
 	private Interfaz_Principal interfaz_Principal;
 	private Interfaz interfaz;
 	private Grafo grafo;
-	private MinimumGeneratingTree algorithm;
+	private MinimumGeneratingTree algritmo;
 
 	private JButton botonAggEspia;
 
@@ -46,22 +40,18 @@ public class Controller {
 	private JButton botonAlgoritmo;
 
 	private List<JComboBox<String>> listComboBoxSpy;
-	private List<JComboBox<Integer>> listComboBoxWeight;
+	private List<JComboBox<Double>> listComboBoxWeight;
 
 	private Map<String, Coordinates> coordsEspias = new HashMap<>();
 
 	private List<Arista> _agm;
 
-	private JComboBox<Integer> comboBoxDivideSpy;
-
-	private JButton dividirEspias;
-
 	public Controller(Interfaz_Principal interfaz_Principal, Interfaz interfaz, Grafo grafo,
-			MinimumGeneratingTree algorithm) {
+			MinimumGeneratingTree algoritmo) {
 		this.interfaz_Principal = interfaz_Principal;
 		this.interfaz = interfaz;
 		this.grafo = grafo;
-		this.algorithm = algorithm;
+		this.algritmo = algoritmo;
 		añadirEspias();
 	}
 
@@ -104,7 +94,7 @@ public class Controller {
 				if (listComboBoxSpy.get(i).getSelectedItem().toString() != interfaz.getNotSelected()) {
 					String src = listaDeEspias.get(i);
 					String dest = listComboBoxSpy.get(i).getSelectedItem().toString();
-					Integer weight = listComboBoxWeight.get(i).getSelectedIndex() + 1;
+					Double weight = (Double) listComboBoxWeight.get(i).getSelectedItem();
 
 					grafo.addEdge(grafo.getVertex(src), grafo.getVertex(dest), weight);
 				}
@@ -131,11 +121,10 @@ public class Controller {
 
 		botonAlgoritmo.addActionListener(e -> {
 
-			_agm = algorithm.minimumSpanningTree(grafo);
+			_agm = algritmo.minimumSpanningTree(grafo);
 
 			if (_agm != null) {
 				interfaz.removeCheckBoxElements();
-				interfaz.createCheckboxDivideCountry(_agm.size());
 				botonAlgoritmo.setEnabled(false);
 				ejecutarAlgoritmo();
 			} else {
@@ -158,7 +147,7 @@ public class Controller {
 				Coordinate clickCoordinate = (Coordinate) mapViewer.getPosition(e.getPoint());
 
 				String nombreEspia = obtenerSigEspiaSinConexion(spyToAdd);
-				//System.err.println(nombreEspia);
+				System.err.println(nombreEspia);
 				interfaz.aggVerticeAlMapa(nombreEspia, clickCoordinate);
 
 				if (nombreEspia != null) {
@@ -214,35 +203,27 @@ public class Controller {
 	}
 
 	private void ejecutarAlgoritmo() {
-		dividirEspias = interfaz.obtenerBotonDividirEspias();
-		comboBoxDivideSpy = interfaz.getComboBoxDivideCountry();
+		interfaz.removePreviewsMapPolygons();
+		
+		List<String> listSpy = new ArrayList<>();
+		
+		for (Arista edge : _agm) {
+			listSpy.add(edge.getSrc().getLabel() + " --> " + edge.getDest().getLabel() + " (" + edge.getPeso()
+					+ ") ");
 
-		dividirEspias.addActionListener(e -> {
-			interfaz.removePreviewsMapPolygons();
-			List<String> listSpy = new ArrayList<>();
-			if (comboBoxDivideSpy.getSelectedItem().hashCode() > 1) {
-				_agm = grafo.deleteHeavyEdge(_agm,
-						comboBoxDivideSpy.getSelectedItem().hashCode() - 1);
-			}
-			for (Arista edge : _agm) {
-				listSpy.add(edge.getSrc().getLabel() + " --> " + edge.getDest().getLabel() + " (" + edge.getPeso()
-						+ ") ");
+			Coordinates src = coordsEspias.get(edge.getSrc().getLabel());
+			Coordinates dest = coordsEspias.get(edge.getDest().getLabel());
 
-				Coordinates src = coordsEspias.get(edge.getSrc().getLabel());
-				Coordinates dest = coordsEspias.get(edge.getDest().getLabel());
+			Coordinate srcCoordinate = new Coordinate(src.getLatitude(), src.getLongitude());
+			Coordinate destCoordinate = new Coordinate(dest.getLatitude(), dest.getLongitude());
 
-				Coordinate srcCoordinate = new Coordinate(src.getLatitude(), src.getLongitude());
-				Coordinate destCoordinate = new Coordinate(dest.getLatitude(), dest.getLongitude());
+			List<Coordinate> route = Arrays.asList(srcCoordinate, destCoordinate, destCoordinate, srcCoordinate);
+			interfaz.createMapPolyMark2(route);
 
-				List<Coordinate> route = Arrays.asList(srcCoordinate, destCoordinate, destCoordinate, srcCoordinate);
-				interfaz.createMapPolyMark2(route);
+		}
 
-			}
-
-			interfaz.createStringOfTheGraph(listSpy, grafo.generateAdjacencyMap());
-			dividirEspias.setEnabled(false);
-			comboBoxDivideSpy.setEnabled(false);
-		});
+		interfaz.createStringOfTheGraph(listSpy, grafo.generateAdjacencyMap());
+		
 
 	}
 

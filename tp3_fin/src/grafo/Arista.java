@@ -5,15 +5,16 @@ import java.util.Objects;
 public class Arista {
     private Vertice src;
     private Vertice dest;
-    private Integer peso;
+    private Double peso;
 
-    public Arista(Vertice source,Vertice dest, Integer peso) {
+    public Arista(Vertice source,Vertice dest, Double weight) {
         this.src = source;
         this.dest = dest;
-        this.peso = peso;
+        this.peso = weight;
     }
 
-    public Vertice getSrc() {
+   
+	public Vertice getSrc() {
         return src;
     }
 
@@ -21,7 +22,7 @@ public class Arista {
         return dest;
     }
 
-    public Integer getPeso() {
+    public Double getPeso() {
         return peso;
     }
 

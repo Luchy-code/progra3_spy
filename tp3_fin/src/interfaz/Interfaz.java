@@ -2,19 +2,12 @@ package interfaz;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
 import javax.swing.*;
-
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -57,7 +50,7 @@ public class Interfaz extends JPanel{
 
 
     private List<JComboBox<String>> listComboBoxSpy;
-    private List<JComboBox<Integer>> listComboBoxWeight;
+    private List<JComboBox<Double>> listComboBoxWeight;
 
 
     private JPanel panelBotones;
@@ -174,12 +167,16 @@ public class Interfaz extends JPanel{
         return model;
     }
     
-    private DefaultComboBoxModel<Integer> createComboBoxModel(int limited) {
-        DefaultComboBoxModel<Integer> model = new DefaultComboBoxModel<>();
-        for (int i = 1 ; i <= limited; i++) {
-            model.addElement(i);
+    public DefaultComboBoxModel<Double> createComboBoxModel() {
+        DefaultComboBoxModel<Double> model = new DefaultComboBoxModel<>();
+        for (int i = 0; i < 1; i++) { // Parte entera (solo 0)
+            for (int j = 0; j <= 9; j++) { // Parte decimal (0 a 9)
+                double value = i + j / 10.0; // Convertir a valor decimal
+                model.addElement(value); // Agregar el valor al modelo
+            }
         }
-        return model;
+        model.addElement(1.0); // Agregar explícitamente 1.0 al final
+        return model; // Retornar el modelo
     }
 
 
@@ -207,11 +204,10 @@ public class Interfaz extends JPanel{
             JLabel label = new JLabel(nombreEspia);
             rowPanel.add(label);
 
-            // Create ComboBox to select other spies and connection weights
             JComboBox<String> comboBox1 = new JComboBox<>(createComboBoxSpy(espiaSelect, nombreEspia));
             rowPanel.add(comboBox1);
 
-            JComboBox<Integer> comboBox2 = new JComboBox<>(createComboBoxModel(10));
+            JComboBox<Double> comboBox2 = new JComboBox<>(createComboBoxModel());
             rowPanel.add(comboBox2);
 
             listComboBoxSpy.add(comboBox1);
@@ -220,10 +216,8 @@ public class Interfaz extends JPanel{
             panelConexAristas.add(rowPanel);
             revalidate();
             repaint();
-
         }
-            
-    }
+        }
 
     private void generarBotonesDeGrafo() {
         
@@ -373,7 +367,6 @@ public class Interfaz extends JPanel{
         panelConexAristas.repaint(); // Repintamos del panel para que se vea
     }
 
-    
     public String getNotSelected() {
         return notSelected;
     }
@@ -382,7 +375,7 @@ public class Interfaz extends JPanel{
         return listComboBoxSpy;
     }
 
-    public List<JComboBox<Integer>> getListComboBoxWeight() {
+    public List<JComboBox<Double>> getListComboBoxWeight() {
         return listComboBoxWeight;
     }
 
@@ -409,6 +402,4 @@ public class Interfaz extends JPanel{
     public JComboBox<Integer> getComboBoxDivideCountry() {
         return comboBoxDivideCountry;
     }
-
-
 }
