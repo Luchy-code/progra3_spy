@@ -147,7 +147,7 @@ public class Controller {
 				Coordinate clickCoordinate = (Coordinate) mapViewer.getPosition(e.getPoint());
 
 				String nombreEspia = obtenerSigEspiaSinConexion(spyToAdd);
-				System.err.println(nombreEspia);
+				//System.err.println(nombreEspia);
 				interfaz.aggVerticeAlMapa(nombreEspia, clickCoordinate);
 
 				if (nombreEspia != null) {
