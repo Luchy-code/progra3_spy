@@ -40,30 +40,31 @@ public class AGM_Test {
 	    MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
 	    List<Arista> mst = mstFinder.minimumSpanningTree(graph);
 
-	    assertNotNull(mst, "El árbol generador mínimo no tiene que ser null");
-	    assertEquals(4, mst.size(), "Tiene que tener al menos 4 aristas");
+	    assertNotNull(mst, "El árbol generador mínimo no puede ser null");
+	    assertEquals(4, mst.size(), "Debe tener exactamente 4 aristas");
 
 	    Double totalWeight = mst.stream().mapToDouble(Arista::getPeso).sum();
 
 	    // Usamos un margen de error pequeño para la comparación de números flotantes
-	    assertEquals(1.1, totalWeight, 0.0001, "El peso total debería ser 2.8");
+	    assertEquals(1.1, totalWeight, 0.0001, "El peso total debería ser 1.1, calculado: " + totalWeight);
 	}
 
+	@Test
+	public void testDisconnectedGraph() {
+	    Grafo disconnectedGraph = new Grafo();
+	    disconnectedGraph.addVertex("A");
+	    disconnectedGraph.addVertex("B");
+	    disconnectedGraph.addVertex("C");
 
+	    // Solo se agrega una arista entre A y B
+	    disconnectedGraph.addEdge(disconnectedGraph.getVertex("A"), disconnectedGraph.getVertex("B"), 0.1);
 
-    @Test
-    public void testDisconnectedGraph() {
-        Grafo disconnectedGraph = new Grafo();
-        disconnectedGraph.addVertex("A");
-        disconnectedGraph.addVertex("B");
-        disconnectedGraph.addVertex("C");
+	    MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
+	    List<Arista> mst = mstFinder.minimumSpanningTree(disconnectedGraph);
 
-        disconnectedGraph.addEdge(disconnectedGraph.getVertex("A"), disconnectedGraph.getVertex("B"), 0.1);
+	    // Si el grafo es disconexo, el árbol generador mínimo debería ser null
+	    assertNull(mst, "El árbol generador mínimo debe ser null, ya que el grafo es disconexo");
+	}
 
-        MinimumGeneratingTree mstFinder = new MinimumGeneratingTree();
-        List<Arista> mst = mstFinder.minimumSpanningTree(disconnectedGraph);
-
-        assertNull(mst, "Tiene que dar null ya que el grafo es disconexo");
-    }
 }
 
